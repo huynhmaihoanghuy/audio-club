@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Bodoi</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .hidden {
+      display: none !important
+    }
+
+    .shown {
+      display: block;
+    }
+
+    #ranh_ruoi {
+      background: #3333c3;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #ranh_ruoi img {
+      width: 50px;
+    }
+  </style>
+
+</head>
+<body>
+  
+  <div id="setup">
+    <input type="text" id="audio_url">
+    <button onclick="play()">Play</button>
+  </div>
+
+  <div id="ranh_ruoi">
+    <img src="./song_icon.png" alt="Song Icon">
+  </div>
+
+  <script>
+    const setupElt = document.getElementById("setup")
+    const ranhRuoiElt = document.getElementById("ranh_ruoi")
+    const imageElt = ranhRuoiElt.childNodes[1]
+    const context = new AudioContext()
+    const analyser = context.createAnalyser()
+
+    setupElt.classList.add("shown")
+    ranhRuoiElt.classList.add("hidden")
+
+    function play() {
+      // const audio_url = document.getElementById("audio_url")
+      // const audio_url = "./2PhutHon-Phao.mp3"
+      // const audio_url = "./despacito.mp3"
+      const audio_url = "./crooked.mp3"
+      const audioObj = new Audio(audio_url)
+      
+      console.log("audioObj", audioObj);
+      
+      setupElt.classList.remove("shown")
+      setupElt.classList.add("hidden")
+      ranhRuoiElt.classList.remove("hidden")
+      ranhRuoiElt.classList.add("shown")
+
+
+      context.createMediaElementSource(audioObj).connect(analyser)
+      analyser.connect(context.destination)
+
+      audioObj.play();
+
+      loop()
+    }
+
+    function loop() {
+      window.requestAnimationFrame(loop)
+
+      fbc = new Uint8Array(analyser.frequencyBinCount)
+      analyser.getByteFrequencyData(fbc)
+      avg = fbc.reduce((a, b) => a + b, 0) / fbc.length
+
+      imageElt.style.width = `${70 + avg}px`
+      ranhRuoiElt.style.backgroundColor = `rgb(${avg + 10},${avg + 70},${avg + 80})`
+    }
+  </script>
+
+</body>
+</html>
