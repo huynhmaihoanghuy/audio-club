@@ -20,6 +20,47 @@
       display: block;
     }
 
+    #setup {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #setup h1 {
+      margin-right: 2rem;
+    }
+
+    #setup ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #setup ul li {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 1rem;
+      border-bottom: 0.1rem solid #cecece;
+      padding-bottom: 1rem;
+    }
+
+    #setup ul li .song-name {
+      width: 20rem;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    #setup ul li button {
+      border: none;
+      background-color: #1f86de;
+      padding: 0.3rem 0.7rem;
+      color: #fff;
+      border-radius: 0.2rem;
+      cursor: pointer;
+    }
+
     #ranh_ruoi {
       background: #3333c3;
       width: 100%;
@@ -33,18 +74,45 @@
     #ranh_ruoi img {
       width: 50px;
     }
+
+    #ranh_ruoi .exit {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
   </style>
 
 </head>
 <body>
   
   <div id="setup">
-    <input type="text" id="audio_url">
-    <button onclick="play()">Play</button>
+    <h1>SONGS</h1>
+    <ul>
+      <li>
+        <div class="song-name">2 Phut Hon - Phao</div>
+        <button onclick="play('2_PHUT_HON')">Play</button>
+      </li>
+      <li>
+        <div class="song-name">Despacito - Despacito ft. Daddy Yankee</div>
+        <button onclick="play('DESPACITO')">Play</button>
+      </li>
+      <li>
+        <div class="song-name">Crooked - G-DRAGON </div>
+        <button onclick="play('CROOKED')">Play</button>
+      </li>
+      <li>
+        <div class="song-name">Why Are You Being Like This - T-ara </div>
+        <button onclick="play('WHY_ARE_YOU_BEING_LIKE_THIS')">Play</button>
+      </li>
+    </ul>
+    
   </div>
 
   <div id="ranh_ruoi">
     <img src="./song_icon.png" alt="Song Icon">
+    <div class="exit" onclick="exit()">Exit</div>
   </div>
 
   <script>
@@ -53,31 +121,48 @@
     const imageElt = ranhRuoiElt.childNodes[1]
     const context = new AudioContext()
     const analyser = context.createAnalyser()
+    let audioObj, n1, n2, n3;
 
     setupElt.classList.add("shown")
     ranhRuoiElt.classList.add("hidden")
 
-    function play() {
-      // const audio_url = document.getElementById("audio_url")
-      // const audio_url = "./2PhutHon-Phao.mp3"
-      // const audio_url = "./despacito.mp3"
-      const audio_url = "./crooked.mp3"
-      const audioObj = new Audio(audio_url)
-      
-      console.log("audioObj", audioObj);
+    const SONGS = {
+      "2_PHUT_HON": "./songs/2PhutHon-Phao.mp3",
+      "DESPACITO": "./songs/despacito.mp3",
+      "CROOKED": "./songs/crooked.mp3",
+      "WHY_ARE_YOU_BEING_LIKE_THIS": "./songs/WhyAreYouBeingLikeThis.mp3"
+    }
+
+    function play(songName) {
+      const audio_url = SONGS[songName]
+      n1 = getRandomInt(10, 20)
+      n2 = getRandomInt(60, 80)
+      n3 = getRandomInt(80, 100)
+
       
       setupElt.classList.remove("shown")
       setupElt.classList.add("hidden")
       ranhRuoiElt.classList.remove("hidden")
       ranhRuoiElt.classList.add("shown")
-
-
+      
+      
+      audioObj = new Audio(audio_url)
       context.createMediaElementSource(audioObj).connect(analyser)
       analyser.connect(context.destination)
 
       audioObj.play();
 
       loop()
+    }
+
+    function exit() {
+      audioObj.pause()
+      audioObj = null
+
+      setupElt.classList.remove("hidden")
+      setupElt.classList.add("shown")
+      ranhRuoiElt.classList.remove("shown")
+      ranhRuoiElt.classList.add("hidden")
     }
 
     function loop() {
@@ -88,7 +173,14 @@
       avg = fbc.reduce((a, b) => a + b, 0) / fbc.length
 
       imageElt.style.width = `${70 + avg}px`
-      ranhRuoiElt.style.backgroundColor = `rgb(${avg + 10},${avg + 70},${avg + 80})`
+
+      ranhRuoiElt.style.backgroundColor = `rgb(${avg + n1},${avg + n2},${avg + n3})`
+    }
+
+    function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
     }
   </script>
 
