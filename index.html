@@ -28,7 +28,8 @@
     }
 
     #setup h1 {
-      margin-right: 2rem;
+      margin: 0 3rem 0 0;
+      border-bottom: 0.3rem solid #1f86de;
     }
 
     #setup ul {
@@ -81,6 +82,22 @@
       left: 2rem;
       cursor: pointer;
       text-decoration: underline;
+    }
+
+    @media (max-width: 767px) {
+      #setup {
+        flex-direction: column;
+      }
+
+      #setup h1 {
+        margin: 0 0 3rem 0;
+      }
+    }
+
+    @media (max-width: 375px) {
+      #setup ul li .song-name {
+        width: 15rem;
+      }
     }
   </style>
 
