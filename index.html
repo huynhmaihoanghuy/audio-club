@@ -119,8 +119,7 @@
     const setupElt = document.getElementById("setup")
     const ranhRuoiElt = document.getElementById("ranh_ruoi")
     const imageElt = ranhRuoiElt.childNodes[1]
-    const context = new AudioContext()
-    const analyser = context.createAnalyser()
+    let analyser = null
     let audioObj, n1, n2, n3;
 
     setupElt.classList.add("shown")
@@ -135,24 +134,26 @@
 
     function play(songName) {
       const audio_url = SONGS[songName]
+      const context = new AudioContext()
+      analyser = context.createAnalyser()
       n1 = getRandomInt(10, 20)
       n2 = getRandomInt(60, 80)
       n3 = getRandomInt(80, 100)
-
       
       setupElt.classList.remove("shown")
       setupElt.classList.add("hidden")
       ranhRuoiElt.classList.remove("hidden")
       ranhRuoiElt.classList.add("shown")
       
-      
       audioObj = new Audio(audio_url)
+      audioObj.autoplay = true
       context.createMediaElementSource(audioObj).connect(analyser)
       analyser.connect(context.destination)
-
-      audioObj.play();
-
-      loop()
+      
+      audioObj.addEventListener("canplaythrough", function() {
+        audioObj.play();
+        loop()
+      })
     }
 
     function exit() {
@@ -173,7 +174,6 @@
       avg = fbc.reduce((a, b) => a + b, 0) / fbc.length
 
       imageElt.style.width = `${70 + avg}px`
-
       ranhRuoiElt.style.backgroundColor = `rgb(${avg + n1},${avg + n2},${avg + n3})`
     }
 
