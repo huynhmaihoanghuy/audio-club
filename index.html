@@ -136,8 +136,8 @@
     const setupElt = document.getElementById("setup")
     const ranhRuoiElt = document.getElementById("ranh_ruoi")
     const imageElt = ranhRuoiElt.childNodes[1]
-    let analyser = null
     let audioObj, n1, n2, n3;
+    let currentSong, analyser;
 
     setupElt.classList.add("shown")
     ranhRuoiElt.classList.add("hidden")
@@ -150,8 +150,9 @@
     }
 
     function play(songName) {
-      const audio_url = SONGS[songName]
+      const audioUrl = SONGS[songName]
       const context = new AudioContext()
+      currentSong = audioUrl
       analyser = context.createAnalyser()
       n1 = getRandomInt(10, 20)
       n2 = getRandomInt(60, 80)
@@ -162,7 +163,7 @@
       ranhRuoiElt.classList.remove("hidden")
       ranhRuoiElt.classList.add("shown")
       
-      audioObj = new Audio(audio_url)
+      audioObj = new Audio(audioUrl)
       audioObj.autoplay = true
       context.createMediaElementSource(audioObj).connect(analyser)
       analyser.connect(context.destination)
@@ -171,6 +172,22 @@
         audioObj.play();
         loop()
       })
+
+      audioObj.addEventListener("ended", function() {
+        console.log("-----ENDED-----");
+        next()
+      })
+    }
+
+    function next() {
+      const songs = Object.values(SONGS)
+      const keys = Object.keys(SONGS)
+      let index = songs.indexOf(currentSong)
+      if (++index === songs.length) {
+        index = 0
+      }
+      console.log("next song: ", songs[index], keys[index]);
+      play(keys[index])
     }
 
     function exit() {
